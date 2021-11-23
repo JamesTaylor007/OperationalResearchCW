@@ -20,12 +20,12 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 %b vector 
 b = [30; 70; 20; 41];
 
-%xb vector, same as b for now, will change later
-xb = b;
-
-%This method would return a vectore x containing the solutions x1, x2,
+%This method would return a vector x containing the solutions x1, x2,
 %x3...
 function[x] = simplexMethodMatrix(matrix, vector)
 
+  %xb vector, same as b for now, will change later
+  xb = b;
+  
 end
 
