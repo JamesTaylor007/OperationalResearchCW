@@ -1,5 +1,5 @@
 %Write down the z equation and the constrains
-syms z x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11;
+syms z x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 M;
 optimising_function = z == 7*x1 + 2*x2 + 3*x3 + x4 + x5 + x6;
 
 %constrains written in canonical form, we don't use them in the code, just
@@ -19,6 +19,9 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 
 %b vector 
 b = [30; 70; 20; 41];
+
+%Might be useful to define z as a vector of its coefficients
+z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0];
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
