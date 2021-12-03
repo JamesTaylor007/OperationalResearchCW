@@ -23,6 +23,8 @@ b = [30; 70; 20; 41];
 %Might be useful to define z as a vector of its coefficients
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0,-50*M];
 
+simplexMethodMatrix(A,b);
+
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
@@ -31,11 +33,20 @@ z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0,-50*M];
 function[x] = simplexMethodMatrix(matrix, vector)
 
   %xb vector, same as b for now, will change later
-  xb = b;
+  xb = vector;
   cb = [0; 0; 0; 0];
   
   %we should be able to calculate this matrix
-  B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1]
+  B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
+  B_columns = [7,8,10,11];
   
+  %ENTER STEP 2, OPTIMALITY
+  
+  %this for loop is to find the columns in A that are not in B
+  columns = uint32(1):uint32(length(matrix));
+  for i = 1:length(B_columns)
+    columns = setdiff(columns,B_columns(i));
+  end
+  disp(cb.' * inv(B));
 end
 
