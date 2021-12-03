@@ -23,14 +23,14 @@ b = [30; 70; 20; 41];
 %Might be useful to define z as a vector of its coefficients
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0,-50*M];
 
-simplexMethodMatrix(A,b);
+simplexMethodMatrix(A,b,z);
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(matrix, vector)
+function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   %xb vector, same as b for now, will change later
   xb = vector;
@@ -47,6 +47,18 @@ function[x] = simplexMethodMatrix(matrix, vector)
   for i = 1:length(B_columns)
     columns = setdiff(columns,B_columns(i));
   end
-  disp(cb.' * inv(B));
+  
+  %this for loop forms the matrix of those columns in A and coefficients in
+  %z
+  A_columns = [];
+  z_columns = [];
+  for i = 1:length(columns)
+    A_columns = [A_columns matrix(:,columns(i))];
+    z_columns = [z_columns z_coefficients(columns(i))];
+  end
+  disp(A_columns);
+  disp(z_columns);
+  
+  disp(cb.' * inv(B) * A_columns - z_columns);
 end
 

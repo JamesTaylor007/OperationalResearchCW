@@ -42,16 +42,15 @@ function[x] = simplexMethodMatrix(matrix, vector)
   
   %ENTER STEP 2, OPTIMALITY
   
-  A_columns = uint32(1):uint32(length(matrix));
+  %this for loop is to find the columns in A that are not in B
+  columns = uint32(1):uint32(length(matrix));
   for i = 1:length(B_columns)
-    A_columns = A_columns(find(A_columns)~=B_columns(i
-    setdiff(z,a)
-    disp("i="+i);
-    disp(B_columns(i));
-    disp(A_columns);
+    columns = setdiff(columns,B_columns(i));
   end
-  %disp(A_columns);
   
+  %this for loop  
+  
+  disp(matrix(:,1));
   disp(cb.' * inv(B));
 end
 
