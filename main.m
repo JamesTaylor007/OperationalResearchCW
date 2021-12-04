@@ -34,7 +34,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   %xb vector, same as b for now, will change later
   xb = vector;
-  cb = [0; 0; 0; 0];
+  cb = sym(zeros(4, 1));
   
   %we should be able to calculate this matrix
   B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
@@ -93,5 +93,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   B(:,leaving_position) = matrix(:,entering_col_position);
   B_columns(leaving_position) = entering_col_position;
   xb = inv(B)*vector;
+  %rewrite cb
+  cb(leaving_position,1) = optimality_vector(2);
+  current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
 end
 
