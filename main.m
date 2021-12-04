@@ -57,7 +57,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
     z_columns = [z_columns z_coefficients(columns(i))];
   end
   
-  optimality_vector = cb.' * inv(B) * A_columns - z_columns
+  optimality_vector = cb.' * inv(B) * A_columns - z_columns;
   
   %we find out the most negative value and save the position so we know
   %which vector is going to enter B
@@ -72,13 +72,11 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
           min_value = current_value;
       end
   end
-  disp(entering_col_position);
   
   %ENTER STEP 4, FEASIBILITY
   
   %We use this vector to find which column in B leaves 
-  BP_vector = inv(B)*matrix(:,entering_col_position)
-  xb
+  BP_vector = inv(B)*matrix(:,entering_col_position);
   %Now we find the minimum
   minimum_val = xb(1)/BP_vector(1);
   leaving_position = 1;
@@ -91,5 +89,9 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   
   %ENTER STEP 5, Rewrite values and find z value
   
+  %Rewrite B
+  B(:,leaving_position) = matrix(:,entering_col_position);
+  B_columns(leaving_position) = entering_col_position;
+  xb = inv(B)*vector;
 end
 
