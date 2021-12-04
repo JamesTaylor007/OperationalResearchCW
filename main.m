@@ -41,8 +41,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   B_columns = [7,8,10,11];
   
   %ENTER STEP 3, OPTIMALITY
-  for iteration=1:2
-  optimality_vector = [];
+  for iteration=1:3
   %this for loop is to find the columns in A that are not in B
   columns = uint32(1):uint32(length(matrix));
   for i = 1:length(B_columns)
@@ -57,11 +56,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
     A_columns = [A_columns matrix(:,columns(i))];
     z_columns = [z_columns z_coefficients(columns(i))];
   end
-  cb.' * inv(B)
-  A_columns
-  z_columns
-  columns
-  optimality_vector = cb.' * inv(B) * A_columns
+
   optimality_vector = cb.' * inv(B) * A_columns - z_columns
 
   %we find out the most negative value and save the position so we know
@@ -78,7 +73,6 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
           min_value = current_value;
       end
   end
-  entering_col_position
   
   %ENTER STEP 4, FEASIBILITY
   
