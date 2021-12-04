@@ -21,7 +21,7 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 b = [30; 70; 20; 41];
 
 %Might be useful to define z as a vector of its coefficients
-z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0,-50*M];
+z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
 simplexMethodMatrix(A,b,z);
 
@@ -41,7 +41,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   B_columns = [7,8,10,11];
   
   %ENTER STEP 3, OPTIMALITY
-  
+  for iteration=1:2
+  optimality_vector = [];
   %this for loop is to find the columns in A that are not in B
   columns = uint32(1):uint32(length(matrix));
   for i = 1:length(B_columns)
@@ -56,22 +57,28 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
     A_columns = [A_columns matrix(:,columns(i))];
     z_columns = [z_columns z_coefficients(columns(i))];
   end
-  
-  optimality_vector = cb.' * inv(B) * A_columns - z_columns;
-  
+  cb.' * inv(B)
+  A_columns
+  z_columns
+  columns
+  optimality_vector = cb.' * inv(B) * A_columns
+  optimality_vector = cb.' * inv(B) * A_columns - z_columns
+
   %we find out the most negative value and save the position so we know
   %which vector is going to enter B
   entering_col_position = 0;
   min_value = 0;
+  format long;
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
-      current_value = subs(temp,M,10000000);
+      current_value = double(subs(temp,M,1000000))
       if current_value<=min_value
-          entering_col_position = i;
+          entering_col_position = columns(i);
           min_value = current_value;
       end
   end
+  entering_col_position
   
   %ENTER STEP 4, FEASIBILITY
   
@@ -90,11 +97,12 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   %ENTER STEP 5, Rewrite values and find z value
   
   %Rewrite B
-  B(:,leaving_position) = matrix(:,entering_col_position);
-  B_columns(leaving_position) = entering_col_position;
+  B(:,leaving_position) = matrix(:,entering_col_position)
+  B_columns(leaving_position) = entering_col_position
   xb = inv(B)*vector;
   %rewrite cb
-  cb(leaving_position,1) = optimality_vector(2);
+  cb(leaving_position,1) = z_coefficients(2);
   current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
+  end 
 end
 

@@ -34,14 +34,14 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   %xb vector, same as b for now, will change later
   xb = vector;
-  cb = [0; 0; 0; 0];
+  cb = sym(zeros(4, 1));
   
   %we should be able to calculate this matrix
   B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
   B_columns = [7,8,10,11];
   
   %ENTER STEP 3, OPTIMALITY
-  
+  while 
   %this for loop is to find the columns in A that are not in B
   columns = uint32(1):uint32(length(matrix));
   for i = 1:length(B_columns)
@@ -73,6 +73,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       end
   end
   
+  
   %ENTER STEP 4, FEASIBILITY
   
   %We use this vector to find which column in B leaves 
@@ -94,5 +95,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   B_columns(leaving_position) = entering_col_position;
   xb = inv(B)*vector;
   %rewrite cb
+  cb(leaving_position,1) = optimality_vector(2);
+  current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
+  
 end
 
