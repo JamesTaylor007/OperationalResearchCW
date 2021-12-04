@@ -56,9 +56,21 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
     A_columns = [A_columns matrix(:,columns(i))];
     z_columns = [z_columns z_coefficients(columns(i))];
   end
-  disp(A_columns);
-  disp(z_columns);
   
-  disp(cb.' * inv(B) * A_columns - z_columns);
+  optimality_vector = cb.' * inv(B) * A_columns - z_columns
+  
+  %now the most negative vector enters B
+  entering_col_position = 0;
+  min_value = 0;
+  for i = 1:length(optimality_vector)
+      temp = optimality_vector(i);
+      syms M;
+      current_value = subs(temp,M,10000000);
+      if current_value<=min_value
+          entering_col_position = i;
+          min_value = current_value;
+      end
+  end
+  disp(entering_col_position);
 end
 
