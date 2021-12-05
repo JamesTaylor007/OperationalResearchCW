@@ -105,6 +105,7 @@ leaving_position_in_B
   B_P_columns = sort(B_P_columns)
   temp_position = find(B_P_columns==entering_col_position);
   B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))]
+  cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))]
   xb = inv(B)*vector;
   %rewrite cb
   cb(temp_position,1) = z_coefficients(entering_col_position)
