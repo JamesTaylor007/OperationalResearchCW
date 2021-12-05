@@ -108,7 +108,6 @@ leaving_position_in_B
   cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))]
   xb = inv(B)*vector;
   %rewrite cb
-  cb(temp_position,1) = z_coefficients(entering_col_position)
   current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
   end 
 end
