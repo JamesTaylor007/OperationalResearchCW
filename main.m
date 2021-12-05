@@ -44,10 +44,10 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   for i = 1:length(B_P_columns)
     columns = setdiff(columns,B_P_columns(i));
   end
-  
+  min_value = -2;
   %ENTER STEP 3, OPTIMALITY
-  for iteration=1:4
-  disp("ITERATION"+iteration)
+  while min_value<0
+      min_value
   %this for loop forms the matrix of those columns in A and coefficients in
   %z
   A_columns = [];
@@ -73,7 +73,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
           min_value = current_value;
       end
   end
-  optimality_vector
+  if min_value<0
   disp("entering P"+entering_col_position);
   
   %ENTER STEP 4, FEASIBILITY
@@ -110,5 +110,6 @@ leaving_position_in_B
   %rewrite cb
   current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
   end 
+  end
 end
 
