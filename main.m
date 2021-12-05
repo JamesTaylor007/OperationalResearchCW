@@ -32,30 +32,41 @@ simplexMethodMatrix(A,b,z);
 %coefficients
 function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
 
+  z_solution = 0;
+  x_values = [];
+  x_solutions = [];
+
   %xb vector, same as b for now, will change later
   xb = vector;
   cb = sym(zeros(4, 1));
   
-  %we should be able to calculate this matrix
+  %B matrix
   B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
+  %This variable will be used to know which P's are currently in B
   B_P_columns = [7,8,10,11];
-  
+
+  %The columns variable will be used to know which columns are in A and
+  %which columns are in B
   columns = uint32(1):uint32(length(matrix));
   for i = 1:length(B_P_columns)
     columns = setdiff(columns,B_P_columns(i));
   end
-  min_value = -2;
-  %ENTER STEP 3, OPTIMALITY
-  while min_value<0
-      min_value
-  %this for loop forms the matrix of those columns in A and coefficients in
-  %z
+  
+  %This variable will be used to check when the optimum has been found,
+  %when it is positive, the while loop will stop
+  all_positive = -1;
+  while all_positive<0
+ 
+  %this for loop forms the matrix of those columns in A
+  %and coefficients in z
   A_columns = [];
   z_columns = [];
   for i = 1:length(columns)
     A_columns = [A_columns matrix(:,columns(i))];
     z_columns = [z_columns z_coefficients(columns(i))];
   end
+  
+  %OPTIMALITY STEP
   
   optimality_vector = cb.' * inv(B) * A_columns - z_columns;
 
@@ -73,43 +84,53 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
           min_value = current_value;
       end
   end
-  if min_value<0
-  disp("entering P"+entering_col_position);
   
-  %ENTER STEP 4, FEASIBILITY
-  
-  %We use this vector to find which column in B leaves 
-  BP_vector = inv(B)*matrix(:,entering_col_position);
-  xb_BP_vector = [];
-  %Now we find the minimum
-  leaving_position_in_B = 1;
-  for i = 1:length(BP_vector)
-      xb_BP_vector(i) = xb(i)/BP_vector(i);
+  %If there are no negative values, a solution has been found
+  all_positive = min_value;
+  if all_positive<0
+    
+    %FEASIBILITY STEP
+    
+    %We use this vector to find which column in B leaves
+    BP_vector = inv(B)*matrix(:,entering_col_position);
+    xb_BP_vector = [];
+    %Now we find the minimum
+    leaving_position_in_B = 1;
+    for i = 1:length(BP_vector)
+        xb_BP_vector(i) = xb(i)/BP_vector(i);
+    end
+    min_val = max(xb_BP_vector(~isinf(xb_BP_vector)));
+    leaving_position_in_B = find(xb_BP_vector==min_val);
+    for i=1:length(xb_BP_vector)
+        if xb_BP_vector(i)<min_val && 0<= xb_BP_vector(i)
+              min_val =  xb_BP_vector(i);
+              leaving_position_in_B = i;
+        end
+    end
+
+      %REWRITE VALUES AND FIND Z
+      
+      %Rewrite B
+      B_P_columns(leaving_position_in_B) = entering_col_position;
+      B_P_columns = sort(B_P_columns);
+      B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))];
+      cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))];
+      xb = inv(B)*vector;
+      %rewrite cb
+      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
   end
-  xb_BP_vector  
-  min_val = max(xb_BP_vector(~isinf(xb_BP_vector)));
-  leaving_position_in_B = find(xb_BP_vector==min_val);
-  for i=1:length(xb_BP_vector)
-      if xb_BP_vector(i)<min_val && 0<= xb_BP_vector(i)
-          min_val =  xb_BP_vector(i);
-          leaving_position_in_B = i;
-      end
   end
-leaving_position_in_B
-  disp("leaving P"+B_P_columns(leaving_position_in_B));
-  
-  %ENTER STEP 5, Rewrite values and find z value
-  
-  %Rewrite B
-  B_P_columns(leaving_position_in_B) = entering_col_position
-  B_P_columns = sort(B_P_columns)
-  temp_position = find(B_P_columns==entering_col_position);
-  B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))]
-  cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))]
-  xb = inv(B)*vector;
-  %rewrite cb
-  current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
-  end 
+  x_solutions = xb;
+  z_solution = current_z;
+  x_values = B_P_columns;
+  disp(" ")
+  disp("solution found:")
+  disp(" ")
+  disp("z value:")
+  disp(z_solution);
+  disp("x values:")
+  for i=1:length(x_solutions)
+      disp("x"+x_values(i)+" = "+xb(i))
   end
 end
 
