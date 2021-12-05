@@ -46,7 +46,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   end
   
   %ENTER STEP 3, OPTIMALITY
-  for iteration=1:2
+  for iteration=1:3
       
   %this for loop forms the matrix of those columns in A and coefficients in
   %z
@@ -98,17 +98,13 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       end
   end
   
-  
-  
-  xb_BP_vector
-  min_val
   disp("leaving P"+B_P_columns(leaving_position_in_B));
   
   %ENTER STEP 5, Rewrite values and find z value
   
   %Rewrite B
   B_P_columns(leaving_position_in_B) = entering_col_position
-  sort(B_P_columns);
+  B_P_columns = sort(B_P_columns)
   B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))]
   xb = inv(B)*vector;
   %rewrite cb
