@@ -46,7 +46,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   end
   
   %ENTER STEP 3, OPTIMALITY
-  for iteration=1:2
+  for iteration=1:4
   disp("ITERATION"+iteration)
   %this for loop forms the matrix of those columns in A and coefficients in
   %z
@@ -68,12 +68,12 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       temp = optimality_vector(i);
       syms M;
       current_value = double(subs(temp,M,1000000));
-      if current_value<=min_value
+      if current_value<min_value
           entering_col_position = columns(i);
           min_value = current_value;
       end
   end
-  
+  optimality_vector
   disp("entering P"+entering_col_position);
   
   %ENTER STEP 4, FEASIBILITY
@@ -88,15 +88,14 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   end
   xb_BP_vector  
   min_val = max(xb_BP_vector(~isinf(xb_BP_vector)));
-
+  leaving_position_in_B = find(xb_BP_vector==min_val);
   for i=1:length(xb_BP_vector)
       if xb_BP_vector(i)<min_val && 0<= xb_BP_vector(i)
           min_val =  xb_BP_vector(i);
           leaving_position_in_B = i;
       end
   end
-  min_val
-  leaving_position_in_B
+leaving_position_in_B
   disp("leaving P"+B_P_columns(leaving_position_in_B));
   
   %ENTER STEP 5, Rewrite values and find z value
@@ -104,7 +103,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   %Rewrite B
   B_P_columns(leaving_position_in_B) = entering_col_position
   B_P_columns = sort(B_P_columns)
-  temp_position = find(B_P_columns==entering_col_position)
+  temp_position = find(B_P_columns==entering_col_position);
   B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))]
   xb = inv(B)*vector;
   %rewrite cb
