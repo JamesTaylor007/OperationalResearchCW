@@ -20,8 +20,8 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 %b vector 
 b = [30; 70; 20; 41];
 
-%Might be useful to define z as a vector of its coefficients
-z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,M,0,0,-50*M];
+%Coefficients of z
+z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
 simplexMethodMatrix(A,b,z);
 
@@ -38,16 +38,16 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   
   %we should be able to calculate this matrix
   B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
-  B_columns = [7,8,10,11];
+  B_P_columns = [7,8,10,11];
   
-  %ENTER STEP 3, OPTIMALITY
-  while 
-  %this for loop is to find the columns in A that are not in B
   columns = uint32(1):uint32(length(matrix));
-  for i = 1:length(B_columns)
-    columns = setdiff(columns,B_columns(i));
+  for i = 1:length(B_P_columns)
+    columns = setdiff(columns,B_P_columns(i));
   end
   
+  %ENTER STEP 3, OPTIMALITY
+  for iteration=1:2
+      
   %this for loop forms the matrix of those columns in A and coefficients in
   %z
   A_columns = [];
@@ -58,45 +58,63 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
   end
   
   optimality_vector = cb.' * inv(B) * A_columns - z_columns;
-  
+
   %we find out the most negative value and save the position so we know
   %which vector is going to enter B
   entering_col_position = 0;
   min_value = 0;
+  format long;
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
-      current_value = subs(temp,M,10000000);
+      current_value = double(subs(temp,M,1000000));
       if current_value<=min_value
-          entering_col_position = i;
+          entering_col_position = columns(i);
           min_value = current_value;
       end
   end
   
+  disp("entering P"+entering_col_position);
   
   %ENTER STEP 4, FEASIBILITY
   
   %We use this vector to find which column in B leaves 
   BP_vector = inv(B)*matrix(:,entering_col_position);
+  xb_BP_vector = [];
   %Now we find the minimum
-  minimum_val = xb(1)/BP_vector(1);
-  leaving_position = 1;
-  for i = 2:length(BP_vector)
-      if(xb(i)/BP_vector(i)<minimum_val)
-          minimum_val = xb(i)/BP_vector(i);
-          leaving_position = i;
+  leaving_position_in_B = 1;
+  for i = 1:length(BP_vector)
+      xb_BP_vector(i) = xb(i)/BP_vector(i);
+  end
+  
+  for i = 1:length(xb_BP_vector)
+      if 
       end
   end
+ 
+  xb_BP_vector
+  
+  leaving_position_in_B = 1;
+  for i = 1:length(xb_BP_vector)
+      if(0<xb_BP_vector (i)<minimum_val)
+          minimum_val = xb_BP_vector(i);
+          leaving_position_in_B = i;
+      end
+  end
+  
+  disp("leaving P"+B_P_columns(leaving_position_in_B));
   
   %ENTER STEP 5, Rewrite values and find z value
   
   %Rewrite B
-  B(:,leaving_position) = matrix(:,entering_col_position);
-  B_columns(leaving_position) = entering_col_position;
+  B_P_columns(leaving_position_in_B) = entering_col_position
+  sort(B_P_columns);
+  B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))]
   xb = inv(B)*vector;
   %rewrite cb
-  cb(leaving_position,1) = optimality_vector(2);
-  current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
-  
+  cb(leaving_position_in_B,1) = z_coefficients(entering_col_position);
+  current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
+  disp(B);
+  end 
 end
 
