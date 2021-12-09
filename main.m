@@ -25,17 +25,29 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 %b vector 
 b = [30; 70; 20; 41];
 
+%the columns of A which we take to form B
+cols = [7,8,10,11];
+
 %Coefficients of z
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
-simplexMethodMatrix(A,b,z);
+%Another problem
+
+A2 = [2, 1, 1, 0, 0, 0;
+    1, 1, 0, 1, 0, 0;
+    1, 2, 0, 0, -1, 1];
+
+b2 = [20; 18; 12];
+z2 = [5, 4, 0, 0, 0, -M];
+
+simplexMethodMatrix(A,b,z, cols);
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
+function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
 
   z_solution = 0;
   x_values = [];
@@ -43,12 +55,16 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   %xb vector, same as b for now, will change later
   xb = vector;
-  cb = sym(zeros(4, 1));
+  cb = sym(zeros(length(xb), 1));
+  
+  %This variable will be used to know which P's are currently in B
+  B_P_columns = columns_of_B;
   
   %B matrix
-  B = [1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1];
-  %This variable will be used to know which P's are currently in B
-  B_P_columns = [7,8,10,11];
+  B = [];
+  for i=1:length(B_P_columns)
+    B(:,i) = matrix(:,B_P_columns(i));
+  end
 
   %The columns variable will be used to know which columns are in A and
   %which columns are in B
