@@ -4,17 +4,16 @@ optimising_function = z == 7*x1 + 2*x2 + 3*x3 + x4 + x5 + x6;
 
 %constrains written in canonical form, we don't use them in the code, just
 %for clarity
-constrain1 = 2*x1 + 7*x2 + x3 + x6 + x7 == 30; 
+constrain1 = sym('constrain1_%d',[1 100]);
+for i=1:length(constrain1)
+    constrain1(i) = 2*x1 + 7*x2 + x3 + x6 + x7 == i;
+end
+disp(constrain1)
 constrain2 =  5*x1 + 8*x2 + 2*x4 + x8 == 70;
 constrain3 = x1 + x2 + x6 - x9 + x10 == 20; 
 constrain4 = x1 + x3 + x5 + x6 + x11 == 41;
 %This last constrain is to make sure all values are non-negative
 constrain5 = x1 * x2 * x3 * x4 * x5 * x6 >= 0;
-
-abc = zeros(1);
-abc(1) = constrain1;
-disp(class(constrain1));
-disp(abc)
 
 %We define matrix A with the coefficients of the constrains
 A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
@@ -23,19 +22,27 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
      1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
 
 %b vector 
-b = [30; 70; 20; 41];
+b_1 = [1:1:100];
+b_2 = 70;
+b_3 = 20;
+b_4 = 41;
+disp(b)
 
 %Coefficients of z
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
-simplexMethodMatrix(A,b,z);
+answer = zeros(100);
+for i=1:length(answer)
+    answer(i) = simplexMethodMatrix(A,[b_1(i);b_2;b_3;b_4],z);
+end
+disp(answer)
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
+function x = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   z_solution = 0;
   x_values = [];
@@ -118,10 +125,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       %Rewrite B
       B_P_columns(leaving_position_in_B) = entering_col_position;
       B_P_columns = sort(B_P_columns);
-      for i=1:length(B_P_columns)
-        B(:,i) = matrix(:,B_P_columns(i));
-        cb(i,1) = z_coefficients(B_P_columns(i));
-      end
+      B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))];
+      cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))];
       xb = inv(B)*vector;
       %rewrite cb
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
@@ -140,4 +145,6 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       disp("x"+x_values(i)+" = "+xb(i))
   end
 end
+
+
 
