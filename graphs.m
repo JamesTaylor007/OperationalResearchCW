@@ -34,9 +34,10 @@ z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 answer = zeros(100);
 disp([b_1(5);b_2;b_3;b_4])
 for i=1:length(answer)
+    %answer(i) = simplexMethodMatrix(A,[i;b_2;b_3;b_4],z)
     simplexMethodMatrix(A,[i;b_2;b_3;b_4],z)
 end
-
+%plot([1:1:100],answer)
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
