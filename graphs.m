@@ -8,7 +8,7 @@ constrain1 = sym('constrain1_%d',[1 100]);
 for i=1:length(constrain1)
     constrain1(i) = 2*x1 + 7*x2 + x3 + x6 + x7 == i;
 end
-disp(constrain1)
+
 constrain2 =  5*x1 + 8*x2 + 2*x4 + x8 == 70;
 constrain3 = x1 + x2 + x6 - x9 + x10 == 20; 
 constrain4 = x1 + x3 + x5 + x6 + x11 == 41;
@@ -26,23 +26,24 @@ b_1 = [1:1:100];
 b_2 = 70;
 b_3 = 20;
 b_4 = 41;
-disp(b)
+
 
 %Coefficients of z
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
 answer = zeros(100);
+disp([b_1(5);b_2;b_3;b_4])
 for i=1:length(answer)
-    answer(i) = simplexMethodMatrix(A,[b_1(i);b_2;b_3;b_4],z);
+    simplexMethodMatrix(A,[i;b_2;b_3;b_4],z)
 end
-plot([1:1:100],answer)
+
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function x = simplexMethodMatrix(matrix, vector, z_coefficients)
+function z_solution = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   z_solution = 0;
   x_values = [];
@@ -135,15 +136,7 @@ function x = simplexMethodMatrix(matrix, vector, z_coefficients)
   x_solutions = xb;
   z_solution = current_z;
   x_values = B_P_columns;
-  disp(" ")
-  disp("solution found:")
-  disp(" ")
-  disp("z value:")
-  disp(z_solution);
-  disp("x values:")
-  for i=1:length(x_solutions)
-      disp("x"+x_values(i)+" = "+xb(i))
-  end
+  
 end
 
 
