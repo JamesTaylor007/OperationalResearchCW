@@ -22,19 +22,27 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
      1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
 
 %b vector 
-b = [30; 70; 20; 41];
+b_1 = [1:1:100];
+b_2 = 70;
+b_3 = 20;
+b_4 = 41;
+disp(b)
 
 %Coefficients of z
 z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
-simplexMethodMatrix(A,b,z);
+answer = zeros(100);
+for i=1:length(answer)
+    answer(i) = simplexMethodMatrix(A,[b_1(i);b_2;b_3;b_4],z);
+end
+plot([1:1:100],answer)
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
+function x = simplexMethodMatrix(matrix, vector, z_coefficients)
 
   z_solution = 0;
   x_values = [];
@@ -137,6 +145,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       disp("x"+x_values(i)+" = "+xb(i))
   end
 end
+
+
 
 
 
