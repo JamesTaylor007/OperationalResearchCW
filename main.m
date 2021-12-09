@@ -113,8 +113,10 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients)
       %Rewrite B
       B_P_columns(leaving_position_in_B) = entering_col_position;
       B_P_columns = sort(B_P_columns);
-      B = [matrix(:,B_P_columns(1)) matrix(:,B_P_columns(2)) matrix(:,B_P_columns(3)) matrix(:,B_P_columns(4))];
-      cb = [z_coefficients(B_P_columns(1)); z_coefficients(B_P_columns(2)); z_coefficients(B_P_columns(3)); z_coefficients(B_P_columns(4))];
+      for i=1:length(B_P_columns)
+        B(:,i) = matrix(:,B_P_columns(i));
+        cb(i,1) = z_coefficients(B_P_columns(i));
+      end
       xb = inv(B)*vector;
       %rewrite cb
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
