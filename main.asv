@@ -41,7 +41,7 @@ b2 = [20; 18; 12];
 z2 = [5, 4, 0, 0, 0, -M];
 cols2 = [3,4,6];
 
-simplexMethodMatrix(A,b,z,cols);
+%simplexMethodMatrix(A,b,z,cols);
 simplexMethodMatrix(A2,b2,z2,cols2);
 
 %This method would return a vector x containing the solutions x1, x2,
@@ -80,10 +80,8 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
   
   %This variable will be used to check when the optimum has been found,
   %when it is positive, the while loop will stop
-  iteration = 0;
   all_positive = -1;
   while all_positive<0
-  iteration = iteration + 1
   %this for loop forms the matrix of those columns in A
   %and coefficients in z
   A_columns = [];
@@ -95,7 +93,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
   
   %OPTIMALITY STEP
   
-  optimality_vector = cb.' * inv(B) * A_columns - z_columns
+  optimality_vector = cb.' * inv(B) * A_columns - z_columns;
 
   %we find out the most negative value and save the position so we know
   %which vector is going to enter B
@@ -126,7 +124,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
     for i = 1:length(BP_vector)
         xb_BP_vector(i) = xb(i)/BP_vector(i);
     end
-    xb_BP_vector
+
     min_val = max(xb_BP_vector(~isinf(xb_BP_vector)));
     leaving_position_in_B = find(xb_BP_vector==min_val);
     for i=1:length(xb_BP_vector)
@@ -135,7 +133,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
               leaving_position_in_B = i;
         end
     end
-    leaving_position_in_B
+    
       %REWRITE VALUES AND FIND Z
       
       %Rewrite B
@@ -146,12 +144,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
         cb(i,1) = z_coefficients(B_P_columns(i));
       end
       xb = inv(B)*vector;
-      
-      cb
-      xb
-      z_coefficients(end)
-      
-      current_z = cb.' * xb(1:(length(xb))) 
+      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
   end
   end
   x_solutions = xb;

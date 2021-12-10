@@ -38,7 +38,7 @@ A2 = [2, 1, 1, 0, 0, 0;
     1, 2, 0, 0, -1, 1];
 
 b2 = [20; 18; 12];
-z2 = [5, 4, 0, 0, 0, -M];
+z2 = [5, 4, 0, 0, 0, -M, 0];
 cols2 = [3,4,6];
 
 simplexMethodMatrix(A,b,z,cols);
@@ -135,7 +135,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
     end
     
       %REWRITE VALUES AND FIND Z
-      
+
       %Rewrite B
       B_P_columns(leaving_position_in_B) = entering_col_position;
       B_P_columns = sort(B_P_columns);
@@ -143,7 +143,9 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
         B(:,i) = matrix(:,B_P_columns(i));
         cb(i,1) = z_coefficients(B_P_columns(i));
       end
+      
       xb = inv(B)*vector;
+      
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
   end
   end
