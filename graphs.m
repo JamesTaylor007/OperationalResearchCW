@@ -22,10 +22,10 @@ A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
      1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
 
 %b vector 
-b_1 = [1:1:100];
-b_2 = 70;
-b_3 = 20;
-b_4 = 41;
+b_1 = [1:1:100]; % 20-34
+b_2 = 70; % 50+
+b_3 = 20; % 16-30
+b_4 = 41; % 20+
 
 
 %Coefficients of z
@@ -38,6 +38,25 @@ for i=1:length(answer)
     simplexMethodMatrix(A,[i;b_2;b_3;b_4],z)
 end
 %plot([1:1:100],answer)
+
+
+% %Coefficients of z
+% z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M]; %this needs changing
+% 
+% answer = zeros(15);
+% disp([b_1(5);b_2;b_3;b_4])
+% constant = -40;
+% for i=20:34
+%     %answer(i) = simplexMethodMatrix(A,[i;b_2;b_3;b_4],z)
+%     answer(i) = simplexMethodMatrix(A,[i;b_2;b_3;b_4],[7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,(constant)*M])
+%     constant = constant - 1;
+% end
+% plot([20:1:34],answer)
+
+
+
+
+
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
