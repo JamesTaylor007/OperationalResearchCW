@@ -55,13 +55,14 @@ cols2 = [3,4,6];
 %simplexMethodMatrix(A2,b2,z2,cols2);
 
 function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minOrMax)
+  initial_length = length(constrainsMatrix);
   for i=1:length(inequalities)
       %If less or equal sign
       if inequalities(i)==-1
           %Add slack variable
           col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add(i) = 1;
-          constrainsMatrix = [constrainsMatrix col_to_add]
+          constrainsMatrix = [constrainsMatrix col_to_add];
       end
       if inequalities(i)==1
           %Add slack variable and artificial
@@ -69,16 +70,32 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           col_to_add2 = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add(i) = -1;
           col_to_add2(i) = 1;
-          constrainsMatrix = [constrainsMatrix col_to_add]
-          constrainsMatrix = [constrainsMatrix col_to_add2]
+          constrainsMatrix = [constrainsMatrix col_to_add];
+          constrainsMatrix = [constrainsMatrix col_to_add2];
       end
       if inequalities(i)==0
           %Add artificial variable
           col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add(i) = 1;
-          constrainsMatrix = [constrainsMatrix col_to_add]
+          constrainsMatrix = [constrainsMatrix col_to_add];
       end
   end
+  B = [];
+  b_columns = [];
+  %Now we find the BFS and columns in A which we will use in B
+  count = 1;
+  for i=(initial_length+1):length(constrainsMatrix)
+      col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
+      col_to_add(count) = 1
+      if constrainsMatrix(:,i)==col_to_add
+        B = [B col_to_add];
+        b_columns = [b_columns i]
+        count = count + 1;
+      end
+  end
+  B
+  b_columns
+  
 end
 
 %This method would return a vector x containing the solutions x1, x2,
