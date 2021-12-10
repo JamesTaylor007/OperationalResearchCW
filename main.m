@@ -11,25 +11,35 @@ constrain4 = x1 + x3 + x5 + x6 + x11 == 41;
 %This last constrain is to make sure all values are non-negative
 constrain5 = x1 * x2 * x3 * x4 * x5 * x6 >= 0;
 
-abc = zeros(1);
-abc(1) = constrain1;
-disp(class(constrain1));
-disp(abc)
+% We define matrix A with the coefficients of the constrains
+% A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
+%      5, 8, 0, 2, 0, 0, 0, 1, 0, 0, 0;
+%      1, 1, 0, 0, 0, 1, 0, 0, -1, 1, 0;
+%      1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
+% 
+% b vector 
+% b = [30; 70; 20; 41];
+% 
+% the columns of A which we take to form B
+% cols = [7,8,10,11];
+% 
+% Coefficients of z
+% z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
-%We define matrix A with the coefficients of the constrains
-A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
-     5, 8, 0, 2, 0, 0, 0, 1, 0, 0, 0;
-     1, 1, 0, 0, 0, 1, 0, 0, -1, 1, 0;
-     1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
+A = [2, 7, 1, 0, 0, 1;
+    5, 8, 0, 2, 0, 0;
+    1, 1, 0, 0, 0, 1;
+    1, 0, 1, 0, 1, 1];
 
-%b vector 
 b = [30; 70; 20; 41];
 
-%the columns of A which we take to form B
-cols = [7,8,10,11];
+coefficients = [7, 2, 3, 1, 1, 1];
 
-%Coefficients of z
-z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
+inequalities = [0,-1,1,-1];
+
+minmax = 'max';
+
+turnToCanonicalForm(A, b, coefficients, inequalities, minmax);
 
 %Another problem
 
@@ -41,8 +51,35 @@ b2 = [20; 18; 12];
 z2 = [5, 4, 0, 0, 0, -M, 0];
 cols2 = [3,4,6];
 
-simplexMethodMatrix(A,b,z,cols);
+%simplexMethodMatrix(A,b,z,cols);
 %simplexMethodMatrix(A2,b2,z2,cols2);
+
+function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minOrMax)
+  for i=1:length(inequalities)
+      %If less or equal sign
+      if inequalities(i)==-1
+          %Add slack variable
+          col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
+          col_to_add(i) = 1;
+          constrainsMatrix = [constrainsMatrix col_to_add]
+      end
+      if inequalities(i)==1
+          %Add slack variable and artificial
+          col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
+          col_to_add2 = zeros(length(constrainsMatrix(:,1)), 1);
+          col_to_add(i) = -1;
+          col_to_add2(i) = 1;
+          constrainsMatrix = [constrainsMatrix col_to_add]
+          constrainsMatrix = [constrainsMatrix col_to_add2]
+      end
+      if inequalities(i)==0
+          %Add artificial variable
+          col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
+          col_to_add(i) = 1;
+          constrainsMatrix = [constrainsMatrix col_to_add]
+      end
+  end
+end
 
 %This method would return a vector x containing the solutions x1, x2,
 %x3...
