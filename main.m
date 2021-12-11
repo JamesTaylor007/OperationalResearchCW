@@ -39,8 +39,6 @@ inequalities = [0,-1,1,-1];
 
 minmax = 1;
 
-[x, y, z, a] = turnToCanonicalForm(A, b, coefficients, inequalities);
-
 %Another problem
 
 A2 = [2, 1, 1;
@@ -50,8 +48,6 @@ A2 = [2, 1, 1;
 b2 = [20; 18; 12];
 z2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
-
-[x, y, z, a] = turnToCanonicalForm(A2, b2, z2, inequalities2);
 
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
 simplexMethodMatrix(A2,b2,z2,inequalities2,1);
@@ -130,7 +126,7 @@ end
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
+function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
 
   z_solution = 0;
   x_values = [];
@@ -178,10 +174,16 @@ function[x] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, in
   entering_col_position = 0;
   min_value = 0;
   format long;
+  big_M = 0;
+  if minmax==1
+     big_M = 1000000;
+  else
+     big_M = -1000000;
+  end
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
-      current_value = double(subs(temp,M,1000000));
+      current_value = double(subs(temp,M,big_M));
       if current_value<min_value
           entering_col_position = columns(i);
           min_value = current_value;
