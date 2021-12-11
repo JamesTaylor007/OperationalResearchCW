@@ -40,10 +40,7 @@ inequalities = [0,-1,1,-1];
 minmax = 'max';
 
 [x, y, z, a] = turnToCanonicalForm(A, b, coefficients, inequalities);
-x
-y
-z
-a
+
 %Another problem
 
 A2 = [2, 1, 1, 0, 0, 0;
@@ -54,7 +51,7 @@ b2 = [20; 18; 12];
 z2 = [5, 4, 0, 0, 0, -M, 0];
 cols2 = [3,4,6];
 
-%simplexMethodMatrix(A,b,z,cols);
+simplexMethodMatrix(A, b, coefficients, inequalities, 1);
 %simplexMethodMatrix(A2,b2,z2,cols2);
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
@@ -131,27 +128,24 @@ end
 
 %maybe add variables of the BFS to be able to pick the right columns and
 %coefficients
-function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
+function[x] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
 
   z_solution = 0;
   x_values = [];
   x_solutions = [];
   
+  [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities);
+  
   %This variable will be used to know which P's are currently in B
-  B_P_columns = columns_of_B;
+  B_P_columns = b_columns;
 
   %xb vector, same as b for now, will change later
-  xb = vector;
+  xb = b_values;
   cb = sym(zeros(length(xb), 1));
   for i=1:length(B_P_columns)
     cb(i,1) = z_coefficients(B_P_columns(i));
   end
   
-  %B matrix
-  B = [];
-  for i=1:length(B_P_columns)
-    B(:,i) = matrix(:,B_P_columns(i));
-  end
 
   %The columns variable will be used to know which columns are in A and
   %which columns are in B
@@ -226,7 +220,7 @@ function[x] = simplexMethodMatrix(matrix, vector, z_coefficients, columns_of_B)
         cb(i,1) = z_coefficients(B_P_columns(i));
       end
       
-      xb = inv(B)*vector;
+      xb = inv(B)*b_values;
       
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
   end
