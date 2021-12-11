@@ -66,6 +66,7 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add(i) = 1;
           constrainsMatrix = [constrainsMatrix col_to_add];
+          z_coefficients = [z_coefficients 0];
       end
       if inequalities(i)==1
           n_of_vars = n_of_vars + 1;
@@ -77,6 +78,7 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           constrainsMatrix = [constrainsMatrix col_to_add];
           constrainsMatrix = [constrainsMatrix col_to_add2];
           artificial_var = [artificial_var n_of_vars];
+          z_coefficients = [z_coefficients 0 0];
       end
       if inequalities(i)==0
           %Add artificial variable
@@ -84,9 +86,10 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           col_to_add(i) = 1;
           constrainsMatrix = [constrainsMatrix col_to_add];
           artificial_var = [artificial_var n_of_vars];
+          z_coefficients = [z_coefficients 0];
       end
   end
-  constrainsMatrix
+
   B = [];
   b_columns = [];
   %Now we find the BFS and columns in A which we will use in B
@@ -101,9 +104,23 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
       end
   end
 
-  B
-  b_columns
-  artificial_var
+  %Transform z equation
+  for i=1:length(artificial_var)
+    temp_col = constrainsMatrix(:,artificial_var(i));
+    temp_number = find(temp_col==1);
+    syms M;
+    temp_row = sym(zeros(length(constrainsMatrix), 1));
+    temp_row = constrainsMatrix(temp_number,:) * M;
+    for j=1:length(b_columns)
+        temp_row(b_columns(j)) = 0;
+    end
+    z_coefficients
+    z_coefficients = z_coefficients + temp_row
+ end
+  
+  B;
+  b_columns;
+  artificial_var;
   
 end
 
