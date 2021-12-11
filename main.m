@@ -39,7 +39,7 @@ inequalities = [0,-1,1,-1];
 
 minmax = 'max';
 
-turnToCanonicalForm(A, b, coefficients, inequalities, minmax);
+turnToCanonicalForm(A, b, coefficients, inequalities);
 
 %Another problem
 
@@ -54,7 +54,7 @@ cols2 = [3,4,6];
 %simplexMethodMatrix(A,b,z,cols);
 %simplexMethodMatrix(A2,b2,z2,cols2);
 
-function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minOrMax)
+function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
   initial_length = length(constrainsMatrix);
   artificial_var = [];
   n_of_vars = initial_length;
@@ -104,6 +104,7 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
       end
   end
 
+  constant = 0;
   %Transform z equation
   for i=1:length(artificial_var)
     temp_col = constrainsMatrix(:,artificial_var(i));
@@ -114,13 +115,11 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
     for j=1:length(b_columns)
         temp_row(b_columns(j)) = 0;
     end
-    z_coefficients
-    z_coefficients = z_coefficients + temp_row
- end
-  
-  B;
-  b_columns;
-  artificial_var;
+    z_coefficients = z_coefficients + temp_row;
+    constant = constant - b_values(temp_number);
+  end
+
+  z_coefficients = [z_coefficients constant];
   
 end
 
