@@ -56,7 +56,10 @@ cols2 = [3,4,6];
 
 function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minOrMax)
   initial_length = length(constrainsMatrix);
+  artificial_var = [];
+  n_of_vars = initial_length;
   for i=1:length(inequalities)
+      n_of_vars = n_of_vars + 1;
       %If less or equal sign
       if inequalities(i)==-1
           %Add slack variable
@@ -65,6 +68,7 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           constrainsMatrix = [constrainsMatrix col_to_add];
       end
       if inequalities(i)==1
+          n_of_vars = n_of_vars + 1;
           %Add slack variable and artificial
           col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add2 = zeros(length(constrainsMatrix(:,1)), 1);
@@ -72,29 +76,34 @@ function[x] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, in
           col_to_add2(i) = 1;
           constrainsMatrix = [constrainsMatrix col_to_add];
           constrainsMatrix = [constrainsMatrix col_to_add2];
+          artificial_var = [artificial_var n_of_vars];
       end
       if inequalities(i)==0
           %Add artificial variable
           col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
           col_to_add(i) = 1;
           constrainsMatrix = [constrainsMatrix col_to_add];
+          artificial_var = [artificial_var n_of_vars];
       end
   end
+  constrainsMatrix
   B = [];
   b_columns = [];
   %Now we find the BFS and columns in A which we will use in B
   count = 1;
   for i=(initial_length+1):length(constrainsMatrix)
       col_to_add = zeros(length(constrainsMatrix(:,1)), 1);
-      col_to_add(count) = 1
+      col_to_add(count) = 1;
       if constrainsMatrix(:,i)==col_to_add
         B = [B col_to_add];
-        b_columns = [b_columns i]
+        b_columns = [b_columns i];
         count = count + 1;
       end
   end
+
   B
   b_columns
+  artificial_var
   
 end
 
