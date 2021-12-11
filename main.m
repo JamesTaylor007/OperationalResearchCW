@@ -37,22 +37,24 @@ coefficients = [7, 2, 3, 1, 1, 1];
 
 inequalities = [0,-1,1,-1];
 
-minmax = 'max';
+minmax = 1;
 
 [x, y, z, a] = turnToCanonicalForm(A, b, coefficients, inequalities);
 
 %Another problem
 
-A2 = [2, 1, 1, 0, 0, 0;
-    1, 1, 0, 1, 0, 0;
-    1, 2, 0, 0, -1, 1];
+A2 = [2, 1, 1;
+    1, 1, 0;
+    1, 2, 0];
 
 b2 = [20; 18; 12];
-z2 = [5, 4, 0, 0, 0, -M, 0];
-cols2 = [3,4,6];
+z2 = [5, 4, 0];
+inequalities2 = [-1,-1,1];
+
+[x, y, z, a] = turnToCanonicalForm(A2, b2, z2, inequalities2);
 
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-%simplexMethodMatrix(A2,b2,z2,cols2);
+%simplexMethodMatrix(A2,b2,z2,inequalities2,1);
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
   initial_length = length(constrainsMatrix);
@@ -105,11 +107,11 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
   end
 
   constant = 0;
+  syms M;
   %Transform z equation
   for i=1:length(artificial_var)
     temp_col = constrainsMatrix(:,artificial_var(i));
     temp_number = find(temp_col==1);
-    syms M;
     temp_row = sym(zeros(length(constrainsMatrix), 1));
     temp_row = constrainsMatrix(temp_number,:) * M;
     for j=1:length(b_columns)
@@ -168,7 +170,10 @@ function[x] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, in
   end
   
   %OPTIMALITY STEP
-  
+  cb
+  B
+  A_columns
+  z_columns
   optimality_vector = cb.' * inv(B) * A_columns - z_columns;
 
   %we find out the most negative value and save the position so we know
