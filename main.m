@@ -54,7 +54,7 @@ inequalities2 = [-1,-1,1];
 [x, y, z, a] = turnToCanonicalForm(A2, b2, z2, inequalities2);
 
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-%simplexMethodMatrix(A2,b2,z2,inequalities2,1);
+simplexMethodMatrix(A2,b2,z2,inequalities2,1);
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
   initial_length = length(constrainsMatrix);
@@ -170,10 +170,7 @@ function[x] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, in
   end
   
   %OPTIMALITY STEP
-  cb
-  B
-  A_columns
-  z_columns
+
   optimality_vector = cb.' * inv(B) * A_columns - z_columns;
 
   %we find out the most negative value and save the position so we know
