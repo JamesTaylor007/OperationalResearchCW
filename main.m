@@ -1,16 +1,3 @@
-%Write down the z equation and the constrains
-syms z x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 M;
-optimising_function = z == 7*x1 + 2*x2 + 3*x3 + x4 + x5 + x6;
-
-%constrains written in canonical form, we don't use them in the code, just
-%for clarity
-constrain1 = 2*x1 + 7*x2 + x3 + x6 + x7 == 30; 
-constrain2 =  5*x1 + 8*x2 + 2*x4 + x8 == 70;
-constrain3 = x1 + x2 + x6 - x9 + x10 == 20; 
-constrain4 = x1 + x3 + x5 + x6 + x11 == 41;
-%This last constrain is to make sure all values are non-negative
-constrain5 = x1 * x2 * x3 * x4 * x5 * x6 >= 0;
-
 % We define matrix A with the coefficients of the constrains
 % A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
 %      5, 8, 0, 2, 0, 0, 0, 1, 0, 0, 0;
@@ -46,11 +33,11 @@ A2 = [2, 1, 1;
     1, 2, 0];
 
 b2 = [20; 18; 12];
-z2 = [5, 4, 0];
+coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-simplexMethodMatrix(A2,b2,z2,inequalities2,1);
+%simplexMethodMatrix(A2,b2,coefficients2,inequalities2,1);
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
   initial_length = length(constrainsMatrix);
