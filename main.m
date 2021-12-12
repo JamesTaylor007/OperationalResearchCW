@@ -38,8 +38,8 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
-simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-simplexMethodMatrix(A2,b2,coefficients2,inequalities2,1);
+simplexMethodMatrix(A, b, coefficients, inequalities, -1);
+%simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
   initial_length = length(constrainsMatrix);
@@ -168,26 +168,34 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   %we find out the most negative value and save the position so we know
   %which vector is going to enter B
   entering_col_position = 0;
-  min_value = 0;
+  min_max_value = 0;
   format long;
-  big_M = 0;
-  if minmax==1
-     big_M = 1000000;
-  else
-     big_M = -1000000;
-  end
+  big_M = 10000000;
+  values = [];
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
       current_value = double(subs(temp,M,big_M));
-      if current_value<min_value
-          entering_col_position = columns(i);
-          min_value = current_value;
+      values = [values current_value];
+      if minmax==1
+          if current_value<min_max_value
+              entering_col_position = columns(i);
+              min_max_value = current_value;
+          end
+      else
+          if current_value>min_max_value
+              entering_col_position = columns(i);
+              min_max_value = current_value;
+          end
       end
   end
-  
+  values
   %If there are no negative values, a solution has been found
-  all_positive = min_value;
+  all_positive = min_max_value;
+  all_positive
+  if minmax==-1 && all_positive>0.000000001
+      all_positive = -all_positive;
+  end
   if all_positive<0
     
     %FEASIBILITY STEP
@@ -209,6 +217,9 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
               leaving_position_in_B = i;
         end
     end
+    if minmax==-1
+        min_val = max(xb_BP_vector(~isinf(xb_BP_vector)));
+    end
     
       %REWRITE VALUES AND FIND Z
 
@@ -222,7 +233,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
       
       xb = inv(B)*b_values;
       
-      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
+      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
   end
   end
   x_solutions = xb;
