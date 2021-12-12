@@ -171,12 +171,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   min_max_value = 0;
   format long;
   big_M = 10000000;
-  values = [];
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
       current_value = double(subs(temp,M,big_M));
-      values = [values current_value];
       if minmax==1
           if current_value<min_max_value
               entering_col_position = columns(i);
@@ -189,10 +187,9 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
           end
       end
   end
-  values
+
   %If there are no negative values, a solution has been found
   all_positive = min_max_value;
-  all_positive
   if minmax==-1 && all_positive>0.000000001
       all_positive = -all_positive;
   end
@@ -233,7 +230,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
       
       xb = inv(B)*b_values;
       
-      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end)
+      current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
   end
   end
   x_solutions = xb;
