@@ -13,6 +13,8 @@
 % Coefficients of z
 % z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
 
+clc
+
 A = [2, 7, 1, 0, 0, 1;
     5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
@@ -37,9 +39,9 @@ coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-%simplexMethodMatrix(A2,b2,coefficients2,inequalities2,1);
+simplexMethodMatrix(A2,b2,coefficients2,inequalities2,1);
 
-function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
+function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
   initial_length = length(constrainsMatrix);
   artificial_var = [];
   n_of_vars = initial_length;
@@ -96,15 +98,22 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
     temp_col = constrainsMatrix(:,artificial_var(i));
     temp_number = find(temp_col==1);
     temp_row = sym(zeros(length(constrainsMatrix), 1));
-    temp_row = constrainsMatrix(temp_number,:) * M;
+    if minmax==1
+        temp_row = constrainsMatrix(temp_number,:) * M;
+    else
+        temp_row = -constrainsMatrix(temp_number,:) * M;
+    end
     for j=1:length(b_columns)
         temp_row(b_columns(j)) = 0;
     end
     z_coefficients = z_coefficients + temp_row;
     constant = constant - b_values(temp_number);
   end
-
-  z_coefficients = [z_coefficients constant*M];
+  if minmax==1
+      z_coefficients = [z_coefficients constant*M];
+  else
+      z_coefficients = [z_coefficients -constant*M];
+  end
   
 end
 
@@ -119,7 +128,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   x_values = [];
   x_solutions = [];
   
-  [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities);
+  [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
   
   %This variable will be used to know which P's are currently in B
   B_P_columns = b_columns;
