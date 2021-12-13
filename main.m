@@ -1,34 +1,26 @@
-% We define matrix A with the coefficients of the constrains
-% A = [2, 7, 1, 0, 0, 1, 1, 0, 0, 0, 0;
-%      5, 8, 0, 2, 0, 0, 0, 1, 0, 0, 0;
-%      1, 1, 0, 0, 0, 1, 0, 0, -1, 1, 0;
-%      1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1];
-% 
-% b vector 
-% b = [30; 70; 20; 41];
-% 
-% the columns of A which we take to form B
-% cols = [7,8,10,11];
-% 
-% Coefficients of z
-% z = [7+3*M,2+8*M,3+M,1,1,1+2*M,0,0,-M,0,0,-50*M];
-
 clc
+
+% A = [2, 7, 1, 0, 0, 1;
+%     5, 8, 0, 2, 0, 0;
+%     1, 1, 0, 0, 0, 1;
+%     1, 0, 1, 0, 1, 1];
 
 A = [2, 7, 1, 0, 0, 1;
     5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
-    1, 0, 1, 0, 1, 1];
+    5, 8, 0, 2, 0, 0];
 
-b = [30; 70; 20; 41];
+%b = [30; 70; 20; 41];
+
+b = [30; 70; 20];
 
 coefficients = [7, 2, 3, 1, 1, 1];
 
-inequalities = [0,-1,1,-1];
+inequalities = [0,1,1,-1];
 
 minmax = 1;
 
-%Another problem
+%Another problems
 
 A2 = [2, 1, 1;
     1, 1, 0;
@@ -38,8 +30,63 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
-simplexMethodMatrix(A, b, coefficients, inequalities, -1);
+checkIfValidInput(A, b, coefficients, inequalities);
+%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
+
+function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
+  %The valid variable stores whether the input is valid or not, if it's 1 
+  %it's valid and if it's -1 it's not
+  valid = 1;
+  
+  %First we check for redundant equations
+  n_constrains = length(constrainsMatrix(:,1));
+  n_var_in_A = length(constrainsMatrix);
+  n_b_values = length(b_values);
+  n_ineq = length(inequalities);
+  n_coefficients = length(z_coefficients);
+  
+  if n_ineq~=n_b_values || n_ineq~=n_constrains
+     valid = -1; 
+  end
+  
+  if n_coefficients~=n_var_in_A
+     valid = -1; 
+  end
+  
+  if valid==-1
+     disp("Size of inputs doesn't match,")
+     disp("please check again before running the program");
+     return;
+  end
+  
+  for i=1:n_b_values
+     for j=1:n_b_values
+        if i~=j
+          scalar = 0;
+          temp_vector_1 = constrainsMatrix(i,:);
+          temp_vector_2 = constrainsMatrix(j,:);
+          for k=1:length(temp_vector_1)
+              if temp_vector_1(k)~=0
+                  scalar = temp_vector_1(k)/temp_vector_2(k);
+              end
+          end
+          valid = -1;
+          for k=1:length(temp_vector_1)
+              if scalar*temp_vector_2(k)~=temp_vector_1(k)
+                  valid = 1;
+              end
+          end 
+          if valid == -1 
+              disp("There's two redundant equations,");
+              disp("Please check your input");
+              return
+          
+          end
+        end
+     end
+  end
+end
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
   initial_length = length(constrainsMatrix);
