@@ -8,15 +8,15 @@ clc
 A = [2, 7, 1, 0, 0, 1;
     5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
-    5, 8, 0, 2, 0, 0];
+    1, 0, 1, 0, 1, 1];
 
 %b = [30; 70; 20; 41];
 
-b = [30; 70; 20];
+b = [30; 70; 20; 41];
 
 coefficients = [7, 2, 3, 1, 1, 1];
 
-inequalities = [0,1,1,-1];
+inequalities = [0,-1,1,-1];
 
 minmax = 1;
 
@@ -30,8 +30,8 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
-checkIfValidInput(A, b, coefficients, inequalities);
-%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+%checkIfValidInput(A, b, coefficients, inequalities);
+simplexMethodMatrix(A, b, coefficients, inequalities, 1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
