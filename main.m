@@ -32,8 +32,8 @@ coefficients3 = [4, 2];
 inequalities3 = [0,1,-1];
 
 %checkIfValidInput(A, b, coefficients, inequalities);
-simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-%simplexMethodMatrix(A3, b3, coefficients3, inequalities3, -1);
+%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+simplexMethodMatrix(A3, b3, coefficients3, inequalities3, -1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
@@ -150,7 +150,7 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
     if minmax==1
         temp_row = constrainsMatrix(temp_number,:) * M;
     else
-        constrainsMatrix(temp_number,:)
+        constrainsMatrix(temp_number,:);
         temp_row = -constrainsMatrix(temp_number,:) * M;
     end
     for j=1:length(b_columns)
@@ -207,7 +207,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   %This variable will be used to check when the optimum has been found,
   %when it is positive, the while loop will stop
   all_positive = -1;
+  count = 0;
   while all_positive<0
+      count = count + 1;
+      disp("current iteration: "+count);
   %this for loop forms the matrix of those columns in A
   %and coefficients in z
   A_columns = [];
