@@ -1,18 +1,11 @@
 clc
 
-% A = [2, 7, 1, 0, 0, 1;
-%     5, 8, 0, 2, 0, 0;
-%     1, 1, 0, 0, 0, 1;
-%     1, 0, 1, 0, 1, 1];
-
 A = [2, 7, 1, 0, 0, 1;
-    2, 2, 0, 0, 0, 2;
+    5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
     1, 0, 1, 0, 1, 1];
 
-%b = [30; 70; 20; 41];
-
-b = [30; 70; 20; 41];
+b = [30; 70; 20];
 
 coefficients = [7, 2, 3, 1, 1, 1];
 
@@ -30,8 +23,8 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
-checkIfValidInput(A, b, coefficients, inequalities);
-%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+%checkIfValidInput(A, b, coefficients, inequalities);
+simplexMethodMatrix(A, b, coefficients, inequalities, 1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
@@ -46,7 +39,7 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
   n_ineq = length(inequalities);
   n_coefficients = length(z_coefficients);
   
-  if n_ineq~=n_b_values && n_ineq~=n_constrains
+  if n_ineq~=n_b_values || n_ineq~=n_constrains
      valid = -1; 
   end
   
@@ -73,8 +66,16 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
           end
           valid = -1;
           for k=1:length(temp_vector_1)
-              if scalar*temp_vector_2(k)
+              if scalar*temp_vector_2(k)~=temp_vector_1(k)
+                  valid = 1;
+              end
           end 
+          if valid == -1 
+              disp("There's two redundant equations,");
+              disp("Please check your input");
+              return
+          
+          end
         end
      end
   end
@@ -166,7 +167,13 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   z_solution = 0;
   x_values = [];
   x_solutions = [];
+  current_z = 0;
   
+  valid = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities);
+  if valid==-1
+     disp('Cou');
+     return;
+  end
   [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
   
   %This variable will be used to know which P's are currently in B

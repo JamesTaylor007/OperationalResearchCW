@@ -1,16 +1,9 @@
 clc
 
-% A = [2, 7, 1, 0, 0, 1;
-%     5, 8, 0, 2, 0, 0;
-%     1, 1, 0, 0, 0, 1;
-%     1, 0, 1, 0, 1, 1];
-
 A = [2, 7, 1, 0, 0, 1;
     5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
     1, 0, 1, 0, 1, 1];
-
-%b = [30; 70; 20; 41];
 
 b = [30; 70; 20; 41];
 
@@ -30,8 +23,17 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
+A3 = [3, 1;
+    4, 3;
+    1, 2];
+
+b3 = [3; 6; 4];
+coefficients3 = [4, 2];
+inequalities3 = [0,1,-1];
+
 %checkIfValidInput(A, b, coefficients, inequalities);
 simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+%simplexMethodMatrix(A3, b3, coefficients3, inequalities3, -1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
@@ -41,7 +43,7 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
   
   %First we check for redundant equations
   n_constrains = length(constrainsMatrix(:,1));
-  n_var_in_A = length(constrainsMatrix);
+  n_var_in_A = length(constrainsMatrix(1,:));
   n_b_values = length(b_values);
   n_ineq = length(inequalities);
   n_coefficients = length(z_coefficients);
@@ -89,7 +91,7 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
 end
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
-  initial_length = length(constrainsMatrix);
+  initial_length = length(constrainsMatrix(1,:));
   artificial_var = [];
   n_of_vars = initial_length;
   for i=1:length(inequalities)
@@ -148,11 +150,13 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
     if minmax==1
         temp_row = constrainsMatrix(temp_number,:) * M;
     else
+        constrainsMatrix(temp_number,:)
         temp_row = -constrainsMatrix(temp_number,:) * M;
     end
     for j=1:length(b_columns)
         temp_row(b_columns(j)) = 0;
     end
+
     z_coefficients = z_coefficients + temp_row;
     constant = constant - b_values(temp_number);
   end
@@ -174,7 +178,12 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   z_solution = 0;
   x_values = [];
   x_solutions = [];
+  current_z = 0;
   
+  valid = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities);
+  if valid==-1
+     return;
+  end
   [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
   
   %This variable will be used to know which P's are currently in B
