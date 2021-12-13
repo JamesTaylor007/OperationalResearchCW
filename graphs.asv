@@ -41,24 +41,83 @@ minmax = 1;
 
 [x, y, z, a] = turnToCanonicalForm(A, b, coefficients, inequalities);
 
-%Another problem
 
-A2 = [2, 1, 1;
-    1, 1, 0;
-    1, 2, 0];
+% %----------------%
+% % --Contraint 1--%
+% %----------------%
+% 
+% bValues = [20:1:34];
+% 
+% zSolutions_C1 = zeros(1,length(bValues),'uint32');
+% for i=1:length(zSolutions_C1)
+%     zSolutions_C1(i) = simplexMethodMatrix(A, [bValues(i); 70; 20; 41], coefficients, inequalities, 1);
+% end
+% disp(zSolutions_C1)
+% figure(1)
+% plot(bValues,zSolutions_C1)
+% title("Z values changing in response to contraint 1")
+% xlabel('Constraint value') 
+% ylabel('z value') 
+% 
+% 
+% %----------------%
+% % --Contraint 2--%
+% %----------------%
+% 
+% bValues1 = [50:1:100];
+% 
+% zSolutions_C2 = zeros(1,length(bValues1),'uint32');
+% for i=1:length(zSolutions_C2)
+%     zSolutions_C2(i) = simplexMethodMatrix(A, [30; bValues1(i); 20; 41], coefficients, inequalities, 1);
+% end
+% disp(zSolutions_C2)
+% figure(2)
+% plot(bValues1,zSolutions_C2)
+% title("Z values changing in response to contraint 2")
+% xlabel('Constraint value') 
+% ylabel('z value') 
+% 
+% 
+% %----------------%
+% % --Contraint 3--%
+% %----------------%
+% 
+% bValues2 = [16:1:30];
+% 
+% zSolutions_C3 = zeros(1,length(bValues2),'uint32');
+% for i=1:length(zSolutions_C3)
+%     zSolutions_C3(i) = simplexMethodMatrix(A, [30; 70; bValues2(i); 41], coefficients, inequalities, 1);
+% end
+% disp(zSolutions_C3)
+% figure(3)
+% plot(bValues2,zSolutions_C3)
+% title("Z values changing in response to contraint 3")
+% xlabel('Constraint value') 
+% ylabel('z value') 
 
-b2 = [20; 18; 12];
-z2 = [5, 4, 0];
-inequalities2 = [-1,-1,1];
 
-[x, y, z, a] = turnToCanonicalForm(A2, b2, z2, inequalities2);
+%----------------%
+% --Contraint 4--%
+%----------------%
 
-abc = simplexMethodMatrix(A, b, coefficients, inequalities, 1)
-bValues = [20:1:34];
-zSolutions = zeros(length(bValues));
-for i=1:length(zSolutions)
-    zSolutions(i) = simplexMethodMatrix(A, [bValues(i), coefficients, inequalities, 1)
-%simplexMethodMatrix(A2,b2,z2,inequalities2,1);
+bValues3 = [20:1:50];
+
+zSolutions_C4 = zeros(1,length(bValues3),'uint32');
+for i=1:length(zSolutions_C4)
+    zSolutions_C4(i) = simplexMethodMatrix(A, [30; 70; bValues2(i); bValues3(i)], coefficients, inequalities, 1);
+end
+disp(zSolutions_C4)
+figure(3)
+plot(bValues2,zSolutions_C4)
+title("Z values changing in response to contraint 3")
+xlabel('Constraint value') 
+ylabel('z value') 
+
+
+
+
+
+
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities)
   initial_length = length(constrainsMatrix);
