@@ -5,7 +5,7 @@ A = [2, 7, 1, 0, 0, 1;
     1, 1, 0, 0, 0, 1;
     1, 0, 1, 0, 1, 1];
 
-b = [30; 70; 20];
+b = [30; 70; 20; 41];
 
 coefficients = [7, 2, 3, 1, 1, 1];
 
@@ -23,8 +23,17 @@ b2 = [20; 18; 12];
 coefficients2 = [5, 4, 0];
 inequalities2 = [-1,-1,1];
 
+A3 = [3, 1;
+    4, 3;
+    1, 2];
+
+b3 = [3; 6; 4];
+coefficients3 = [4, 1];
+inequalities3 = [0, 1, -1];
+
 %checkIfValidInput(A, b, coefficients, inequalities);
-simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
+simplexMethodMatrix(A3, b3, coefficients3, inequalities3, -1);
 %simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
@@ -34,7 +43,7 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
   
   %First we check for redundant equations
   n_constrains = length(constrainsMatrix(:,1));
-  n_var_in_A = length(constrainsMatrix);
+  n_var_in_A = length(constrainsMatrix(1,:));
   n_b_values = length(b_values);
   n_ineq = length(inequalities);
   n_coefficients = length(z_coefficients);
@@ -82,7 +91,7 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
 end
 
 function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
-  initial_length = length(constrainsMatrix);
+  initial_length = length(constrainsMatrix(1,:));
   artificial_var = [];
   n_of_vars = initial_length;
   for i=1:length(inequalities)
@@ -141,11 +150,13 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
     if minmax==1
         temp_row = constrainsMatrix(temp_number,:) * M;
     else
+        constrainsMatrix(temp_number,:);
         temp_row = -constrainsMatrix(temp_number,:) * M;
     end
     for j=1:length(b_columns)
         temp_row(b_columns(j)) = 0;
     end
+
     z_coefficients = z_coefficients + temp_row;
     constant = constant - b_values(temp_number);
   end
@@ -154,6 +165,11 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
   else
       z_coefficients = [z_coefficients -constant*M];
   end
+  
+  disp("The problem in canonical form becomes:");
+  constrainsMatrix
+  z_coefficients
+  artificial_var
   
 end
 
@@ -168,10 +184,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   x_values = [];
   x_solutions = [];
   current_z = 0;
+  past_zs = [];
   
   valid = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities);
   if valid==-1
-     disp('Cou');
      return;
   end
   [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
@@ -197,7 +213,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   %This variable will be used to check when the optimum has been found,
   %when it is positive, the while loop will stop
   all_positive = -1;
+  count = 0;
   while all_positive<0
+      count = count + 1;
+      disp("current iteration: "+count);
   %this for loop forms the matrix of those columns in A
   %and coefficients in z
   A_columns = [];
@@ -216,7 +235,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   entering_col_position = 0;
   min_max_value = 0;
   format long;
-  big_M = 10000000;
+  big_M = 1000;
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
@@ -236,9 +255,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
 
   %If there are no negative values, a solution has been found
   all_positive = min_max_value;
-  if minmax==-1 && all_positive>0.000000001
+  if minmax==-1
       all_positive = -all_positive;
   end
+
   if all_positive<0
     
     %FEASIBILITY STEP
@@ -277,6 +297,11 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
       xb = inv(B)*b_values;
       
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
+      if any(past_zs(:) == current_z)
+          all_positive = 1;
+      else
+          past_zs = [past_zs current_z];
+      end
   end
   end
   x_solutions = xb;

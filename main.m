@@ -28,8 +28,8 @@ A3 = [3, 1;
     1, 2];
 
 b3 = [3; 6; 4];
-coefficients3 = [4, 2];
-inequalities3 = [0,1,-1];
+coefficients3 = [4, 1];
+inequalities3 = [0, 1, -1];
 
 %checkIfValidInput(A, b, coefficients, inequalities);
 %simplexMethodMatrix(A, b, coefficients, inequalities, 1);
@@ -166,6 +166,12 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
       z_coefficients = [z_coefficients -constant*M];
   end
   
+  disp("The problem in canonical form becomes:");
+  disp(constrainsMatrix);
+  
+  disp("With the z coefficients being:");
+  disp(z_coefficients);
+  
 end
 
 %This method would return a vector x containing the solutions x1, x2,
@@ -179,6 +185,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   x_values = [];
   x_solutions = [];
   current_z = 0;
+  past_zs = [];
   
   valid = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities);
   if valid==-1
@@ -207,7 +214,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   %This variable will be used to check when the optimum has been found,
   %when it is positive, the while loop will stop
   all_positive = -1;
-  count = 0;
+  count = -1;
   while all_positive<0
       count = count + 1;
       disp("current iteration: "+count);
@@ -229,7 +236,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   entering_col_position = 0;
   min_max_value = 0;
   format long;
-  big_M = 10000000;
+  big_M = 1000;
   for i = 1:length(optimality_vector)
       temp = optimality_vector(i);
       syms M;
@@ -249,9 +256,10 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
 
   %If there are no negative values, a solution has been found
   all_positive = min_max_value;
-  if minmax==-1 && all_positive>0.000000001
+  if minmax==-1
       all_positive = -all_positive;
   end
+
   if all_positive<0
     
     %FEASIBILITY STEP
@@ -290,6 +298,11 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
       xb = inv(B)*b_values;
       
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
+      if any(past_zs(:) == current_z)
+          all_positive = 1;
+      else
+          past_zs = [past_zs current_z];
+      end
   end
   end
   x_solutions = xb;
