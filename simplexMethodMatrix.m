@@ -1,4 +1,5 @@
 
+%Do Not Run This%
 function[z_solution] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
 
   z_solution = 0;

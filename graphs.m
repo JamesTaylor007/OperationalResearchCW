@@ -1,3 +1,4 @@
+%Run this file to produce all the different graphs
 %clear your work space and console so that there is no clash
 clear
 clc
@@ -9,7 +10,6 @@ A = [2, 7, 1, 0, 0, 1;
     1, 1, 0, 0, 0, 1;
     1, 0, 1, 0, 1, 1];
 
-b = [30; 70; 20; 41];
 
 coefficients = [7, 2, 3, 1, 1, 1];
 
