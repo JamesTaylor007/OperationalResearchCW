@@ -6,7 +6,7 @@ A = [2, 7, 1, 0, 0, 1;
     1, 1, 0, 0, 0, 1;
     1, 0, 1, 0, 1, 1];
 
-b = [30; 70; 20; 41];
+b = [30, 70, 20, 41];
 
 c = [7, 2, 3, 1, 1, 1];
 
@@ -121,10 +121,16 @@ function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, 
   end
 end
 
-function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
+function[constrainsMatrix, B, b_values, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
   initial_length = length(constrainsMatrix(1,:));
   artificial_var = [];
   n_of_vars = initial_length;
+
+  %If b_vector is not in column form it turns it into one
+   if length(b_values(1,:))~=1
+      b_values = b_values.';
+   end
+ 
   for i=1:length(inequalities)
       n_of_vars = n_of_vars + 1;
       %If less or equal sign
@@ -205,11 +211,6 @@ function[constrainsMatrix, B, b_columns, z_coefficients] = turnToCanonicalForm(c
   
 end
 
-%This method would return a vector x containing the solutions x1, x2,
-%x3...
-
-%maybe add variables of the BFS to be able to pick the right columns and
-%coefficients
 function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, inequalities, minmax)
 
   z_solution = 0;
@@ -222,7 +223,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   if valid==-1
      return;
   end
-  [matrix, B, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
+  [matrix, B, b_values, b_columns, z_coefficients] = turnToCanonicalForm(constrainsMatrix, b_values, z_coefficients, inequalities, minmax);
   
   %This variable will be used to know which P's are currently in B
   B_P_columns = b_columns;
@@ -349,10 +350,12 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   x_solutions = xb;
   z_solution = current_z;
 
+  %Infeasible solutions
   if has(z_solution, M)
      disp(' '); 
      disp('This problem is unfeasible'); 
   else
+      
   x_values = B_P_columns;
   disp(" ")
   disp("solution found:")
