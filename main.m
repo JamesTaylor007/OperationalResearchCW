@@ -1,5 +1,6 @@
 clc
 
+%Our original problem
 A = [2, 7, 1, 0, 0, 1;
     5, 8, 0, 2, 0, 0;
     1, 1, 0, 0, 0, 1;
@@ -7,34 +8,39 @@ A = [2, 7, 1, 0, 0, 1;
 
 b = [30; 70; 20; 41];
 
-coefficients = [7, 2, 3, 1, 1, 1];
+c = [7, 2, 3, 1, 1, 1];
 
-inequalities = [0,-1,1,-1];
+ineq = [0,-1,1,-1];
 
 minmax = 1;
 
-%Another problems
+simplexMethodMatrix(A, b, c, ineq, minmax);
 
-A2 = [2, 1, 1;
-    1, 1, 0;
-    1, 2, 0];
 
-b2 = [20; 18; 12];
-coefficients2 = [5, 4, 0];
-inequalities2 = [-1,-1,1];
+%Another problem, it's Q2, a) in the examples sheet 2
+% A2 = [1, 2, -2, 4;
+%     2, -1, 1, 2;
+%     4, -2, 1, -1];
+% 
+% b2 = [40; 8; 10];
+% c2 = [2, 1, -3, 5];
+% ineq2 = [-1, -1, -1];
+% minmax2 = 1;
+% 
+% simplexMethodMatrix(A2, b2, c2, ineq2, minmax2);
+    
+%Minimising problem
+% A3 = [3, 1;
+%     4, 3;
+%     1, 2];
+% 
+% b3 = [3; 6; 4];
+% c3 = [4, 1];
+% ineq3 = [0, 1, -1];
+% minmax3 = -1;
+% 
+% simplexMethodMatrix(A3, b3, c3, ineq3, minmax3);
 
-A3 = [3, 1;
-    4, 3;
-    1, 2];
-
-b3 = [3; 6; 4];
-coefficients3 = [4, 1];
-inequalities3 = [0, 1, -1];
-
-%checkIfValidInput(A, b, coefficients, inequalities);
-%simplexMethodMatrix(A, b, coefficients, inequalities, 1);
-simplexMethodMatrix(A3, b3, coefficients3, inequalities3, -1);
-%simplexMethodMatrix(A2,b2,coefficients2,inequalities2,-1);
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
   %The valid variable stores whether the input is valid or not, if it's 1 
