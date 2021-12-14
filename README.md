@@ -22,8 +22,8 @@ The graphs file is the file which will produce graphs. Nothing needs to be chang
 What if something doesn't work?
 
 - Make sure your PATH is correct. Matlab will do this automatically and ask you if you would like to add xyz.m to your PATH. Click yes to this alert. This is matlab trying to find the file to run.
-- Make sure your workspace is clear. Matlab will save all variables to your workspace (this can be seen on the right hand side of the matlab editor). This is so you can run scripts and then paly around with the variables in the console. However if there are variables from previous scripts you have run which our named the same as ours (ie two groups might name the A matrix A or the b matrix b since it is the most logical thing to do) this might interfer. Our scripts SHOULD clear your work space before they are ran but if they do not simple type `clear` into your matlab console. 
+- Make sure your workspace is clear. Matlab will save all variables to your workspace (this can be seen on the right hand side of the matlab editor). This is so you can run scripts and then play around with the variables in the console. However if there are variables from previous scripts there could be some werid interactions. Our scripts should clear your workspace each time but if you get an error in the console simply type `clear` and then run the scripts again.
 
-If you do have any problems running this script please email us. This repo has been tested on several computers in hasselgrave all of which seem to work. 
+If you do have any problems running this script please email us. This repo has been tested on several computers in hasselgrave all of which work. We are more than happy to jump on a call and help you run this if need be :)  
 
 
