@@ -41,6 +41,31 @@ simplexMethodMatrix(A, b, c, ineq, minmax);
 % 
 % simplexMethodMatrix(A3, b3, c3, ineq3, minmax3);
 
+%Unbounded problem
+% A4 = [1, 2, -2, 4;
+%     2, -1, 1, 2;
+%     4, -2, 2, 4];
+% 
+% b4 = [40; 8; 10];
+% c4 = [2, 1, -3, 5];
+% ineq4 = [-1, -1, -1];
+% minmax4 = 1;
+% 
+% simplexMethodMatrix(A4, b4, c4, ineq4, minmax4);
+
+%Infeasible solution
+% A5 = [2, 1;
+%     3, 4];
+% 
+% b5 = [2; 12];
+% c5 = [3, 2];
+% ineq5 = [-1, 1];
+% minmax5 = 1;
+% 
+% simplexMethodMatrix(A5, b5, c5, ineq5, minmax5);
+
+
+
 
 function[valid] = checkIfValidInput(constrainsMatrix, b_values, z_coefficients, inequalities)
   %The valid variable stores whether the input is valid or not, if it's 1 
@@ -304,15 +329,30 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
       xb = inv(B)*b_values;
       
       current_z = cb.' * xb(1:(length(xb))) + z_coefficients(end);
-      if any(past_zs(:) == current_z)
+      
+      %If the last z is equal to the current z, it means that we've found 
+      %the optimum
+      if any(past_zs(:) == current_z(end))
           all_positive = 1;
       else
-          past_zs = [past_zs current_z];
+          if any(past_zs(:) == current_z)
+            disp('Problem is cyclic');
+            all_positive = 1;
+          else
+            past_zs = [past_zs current_z];
+          end
       end
+
   end
   end
+  
   x_solutions = xb;
   z_solution = current_z;
+
+  if has(z_solution, M)
+     disp(' '); 
+     disp('This problem is unfeasible'); 
+  else
   x_values = B_P_columns;
   disp(" ")
   disp("solution found:")
@@ -322,6 +362,7 @@ function[] = simplexMethodMatrix(constrainsMatrix, b_values, z_coefficients, ine
   disp("x values:")
   for i=1:length(x_solutions)
       disp("x"+x_values(i)+" = "+xb(i))
+  end
   end
 end
 
